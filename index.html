@@ -2,195 +2,729 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SaberLAB - Plataforma Educativa</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SaberLAB: aprender sin Internet | IESTAP</title>
+  <meta name="description" content="SaberLAB es una aplicación educativa hecha en App Inventor por estudiantes de grado 11-2 de la Institución Educativa Santa Teresa de Pachaquiaro. Funciona sin conexión a Internet.">
+  <meta name="theme-color" content="#1F5C40">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231F5C40'/%3E%3Ccircle cx='46' cy='18' r='7' fill='%23F2B632'/%3E%3Cpath d='M14 46c8-14 28-14 36 0' stroke='%23fff' stroke-width='6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
-    h1, h2, h3, .font-heading { font-family: 'Space Grotesk', sans-serif; }
+    :root {
+      --bg: #F6F8F3;
+      --surface: #FFFFFF;
+      --ink: #14251C;
+      --muted: #4E6357;
+      --line: #D5DED6;
+      --soft: #E7EFE7;
+      --moriche: #1F5C40;
+      --on-moriche: #FFFFFF;
+      --sol: #F2B632;
+      --rio: #2F6F9F;
+      --tierra: #A4562E;
+      --frame: #14251C;
+      --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+      --body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0F1A14;
+        --surface: #16251C;
+        --ink: #E8F0EA;
+        --muted: #A3B8AB;
+        --line: #2A3B31;
+        --soft: #1C2F24;
+        --moriche: #5FBF8C;
+        --on-moriche: #0F1A14;
+        --sol: #F2C04E;
+        --rio: #7DB4DA;
+        --tierra: #E08A5E;
+        --frame: #000000;
+        color-scheme: dark;
+      }
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--body);
+      font-size: 1.0625rem;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    svg { display: block; max-width: 100%; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid var(--sol); outline-offset: 3px; border-radius: 6px; }
+    .wrap { width: min(1120px, 100% - 2.5rem); margin-inline: auto; }
+    h1, h2, h3 {
+      font-family: var(--display);
+      font-variation-settings: "wdth" 112;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+    h2 { font-size: clamp(1.9rem, 3.6vw, 2.9rem); font-weight: 800; max-width: 18ch; }
+    p { margin: 0 0 1rem; }
+    .muted { color: var(--muted); }
+    section { padding: 6rem 0; }
+    .skip { position: absolute; left: -999px; top: 0; background: var(--sol); color: #14251C; padding: .6rem 1rem; z-index: 50; }
+    .skip:focus { left: 1rem; top: 1rem; }
+
+    /* ---------- Encabezado ---------- */
+    .top {
+      position: sticky; top: 0; z-index: 30;
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+    }
+    .top .wrap { display: flex; align-items: center; justify-content: space-between; height: 4rem; }
+    .brand {
+      display: flex; align-items: center; gap: .6rem; text-decoration: none;
+      font-family: var(--display); font-weight: 800; font-size: 1.3rem;
+      font-variation-settings: "wdth" 118;
+    }
+    .brand svg { width: 2rem; height: 2rem; }
+    .menu { display: flex; gap: 1.75rem; list-style: none; margin: 0; padding: 0; }
+    .menu a { text-decoration: none; color: var(--muted); font-weight: 700; font-size: .95rem; transition: color .2s; }
+    .menu a:hover { color: var(--ink); }
+    .menu-btn {
+      display: none; align-items: center; justify-content: center;
+      width: 2.75rem; height: 2.75rem; border-radius: 50%;
+      border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer;
+    }
+    .menu-btn span, .menu-btn span::before, .menu-btn span::after {
+      display: block; width: 18px; height: 2px; background: currentColor; border-radius: 2px;
+      position: relative; transition: transform .25s, background .25s;
+    }
+    .menu-btn span::before, .menu-btn span::after { content: ""; position: absolute; left: 0; }
+    .menu-btn span::before { top: -6px; }
+    .menu-btn span::after { top: 6px; }
+    .menu-btn[aria-expanded="true"] span { background: transparent; }
+    .menu-btn[aria-expanded="true"] span::before { transform: translateY(6px) rotate(45deg); }
+    .menu-btn[aria-expanded="true"] span::after { transform: translateY(-6px) rotate(-45deg); }
+
+    @media (max-width: 760px) {
+      .menu-btn { display: inline-flex; }
+      .menu {
+        position: absolute; top: 4rem; left: 0; right: 0;
+        flex-direction: column; gap: 0;
+        background: var(--surface); border-bottom: 1px solid var(--line);
+        padding: .25rem 1.25rem 1rem;
+        opacity: 0; visibility: hidden; transform: translateY(-8px);
+        transition: opacity .25s, transform .25s, visibility .25s;
+      }
+      .menu.open { opacity: 1; visibility: visible; transform: none; }
+      .menu a { display: block; padding: .9rem 0; border-bottom: 1px solid var(--line); font-size: 1.05rem; }
+      .menu li:last-child a { border-bottom: 0; }
+    }
+
+    /* ---------- Portada ---------- */
+    .hero { position: relative; overflow: hidden; padding: 4.5rem 0 9rem; }
+    .hero .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 3rem; align-items: center; position: relative; z-index: 1; }
+    .kicker { display: inline-flex; align-items: center; gap: .55rem; font-weight: 700; color: var(--muted); margin-bottom: 1.25rem; }
+    .kicker::before { content: ""; width: .7rem; height: .7rem; border-radius: 50%; background: var(--sol); }
+    .hero h1 { font-size: clamp(2.6rem, 6.4vw, 5rem); font-weight: 800; font-variation-settings: "wdth" 120; max-width: 13ch; }
+    .lede { font-size: 1.2rem; color: var(--muted); max-width: 34em; margin: 1.5rem 0 2rem; }
+    .ctas { display: flex; flex-wrap: wrap; gap: .75rem; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .85rem 1.4rem; border-radius: 999px;
+      font: 700 1rem var(--body); text-decoration: none; cursor: pointer;
+      border: 2px solid var(--moriche);
+      transition: background .2s, color .2s, transform .2s;
+    }
+    .btn-primary { background: var(--moriche); color: var(--on-moriche); }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-ghost { background: transparent; color: var(--moriche); }
+    .btn-ghost:hover { background: var(--soft); }
+    .horizon { position: absolute; left: 0; right: 0; bottom: 0; height: 140px; width: 100%; color: var(--line); pointer-events: none; }
+
+    /* Teléfono animado */
+    .phone-stage { display: flex; flex-direction: column; align-items: center; gap: .9rem; }
+    .phone {
+      width: min(300px, 80vw); aspect-ratio: 9 / 18.5;
+      border-radius: 2.5rem; background: var(--frame); padding: .65rem;
+      box-shadow: 0 40px 70px -35px rgba(20, 37, 28, .55);
+      rotate: 2deg;
+    }
+    .screen { height: 100%; border-radius: 1.9rem; background: var(--surface); overflow: hidden; display: flex; flex-direction: column; }
+    .status { display: flex; justify-content: space-between; align-items: center; padding: .75rem 1.2rem .3rem; font-size: .78rem; font-weight: 700; }
+    .signal { display: flex; align-items: center; gap: .45rem; }
+    .bars { display: flex; align-items: flex-end; gap: 2px; height: 12px; }
+    .bars i { width: 3px; background: var(--ink); border-radius: 1px; }
+    .bars i:nth-child(1) { height: 4px; } .bars i:nth-child(2) { height: 6px; }
+    .bars i:nth-child(3) { height: 9px; } .bars i:nth-child(4) { height: 12px; }
+    .wifi { width: 15px; height: 12px; }
+    .wifi .slash { stroke-dasharray: 22; stroke-dashoffset: 0; }
+    .app-head { padding: .8rem 1.1rem 0; }
+    .app-head small { color: var(--muted); font-size: .75rem; }
+    .app-head h3 { font-size: 1.2rem; margin-top: .1rem; }
+    .chip {
+      display: inline-flex; align-items: center; gap: .4rem; margin-top: .55rem;
+      padding: .3rem .7rem; border-radius: 999px;
+      background: color-mix(in srgb, var(--sol) 28%, transparent);
+      font-size: .76rem; font-weight: 700;
+    }
+    .chip::before { content: ""; width: .45rem; height: .45rem; border-radius: 50%; background: var(--moriche); }
+    .mats { list-style: none; margin: .9rem 0 0; padding: 0 .75rem; display: grid; gap: .5rem; }
+    .mat {
+      display: flex; gap: .65rem; align-items: center;
+      padding: .6rem .65rem; border-radius: .9rem;
+      background: var(--bg); border: 1px solid var(--line);
+    }
+    .mat .tag {
+      flex: none; width: 2.1rem; height: 2.1rem; border-radius: .6rem;
+      display: grid; place-items: center;
+      font: 800 .78rem var(--display); color: #fff;
+    }
+    .mat strong { display: block; font-size: .84rem; line-height: 1.2; }
+    .mat div span { font-size: .72rem; color: var(--muted); }
+    .mat .check {
+      margin-left: auto; flex: none; width: 1.4rem; height: 1.4rem; border-radius: 50%;
+      background: var(--moriche); color: var(--on-moriche); display: grid; place-items: center;
+    }
+    .check svg { width: .8rem; }
+    .replay { background: none; border: 0; color: var(--muted); font: 700 .9rem var(--body); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: .4rem; }
+    .replay:hover { color: var(--ink); }
+
+    .phone.play { animation: rise .8s cubic-bezier(.2,.8,.2,1) both; }
+    .phone.play .bars i { animation: fade-bar .3s ease both; }
+    .phone.play .bars i:nth-child(4) { animation-delay: 1.1s; }
+    .phone.play .bars i:nth-child(3) { animation-delay: 1.3s; }
+    .phone.play .bars i:nth-child(2) { animation-delay: 1.5s; }
+    .phone.play .bars i:nth-child(1) { animation-delay: 1.7s; }
+    .phone.play .wifi .slash { animation: draw .4s ease 1.9s both; }
+    .phone.play .chip { animation: pop .45s cubic-bezier(.3,1.5,.5,1) 2.3s both; }
+    .phone.play .mat { animation: slide-in .5s cubic-bezier(.2,.8,.2,1) both; }
+    .phone.play .mat:nth-child(1) { animation-delay: 2.7s; }
+    .phone.play .mat:nth-child(2) { animation-delay: 2.95s; }
+    .phone.play .mat:nth-child(3) { animation-delay: 3.2s; }
+    .phone.play .mat:nth-child(4) { animation-delay: 3.45s; }
+    .phone.play .check { animation: pop .45s cubic-bezier(.3,1.5,.5,1) 4.2s both; }
+    .bars i { opacity: .2; }
+    @keyframes rise { from { opacity: 0; transform: translateY(40px); } }
+    @keyframes fade-bar { from { opacity: 1; } to { opacity: .2; } }
+    @keyframes draw { from { stroke-dashoffset: 22; } to { stroke-dashoffset: 0; } }
+    @keyframes pop { from { opacity: 0; transform: scale(.6); } }
+    @keyframes slide-in { from { opacity: 0; transform: translateX(-16px); } }
+
+    @media (max-width: 860px) {
+      .hero { padding: 3rem 0 8rem; }
+      .hero .wrap { grid-template-columns: 1fr; gap: 3.5rem; }
+    }
+
+    /* ---------- El reto ---------- */
+    .reto { background: var(--surface); border-block: 1px solid var(--line); }
+    .reto .wrap { display: grid; grid-template-columns: 5fr 7fr; gap: 3rem; }
+    .reto .texto { font-size: 1.15rem; max-width: 36em; }
+    .objetivo {
+      margin: 2rem 0 0; padding: 1.5rem 1.75rem;
+      border-left: 6px solid var(--sol); background: var(--soft); border-radius: 0 1rem 1rem 0;
+    }
+    .objetivo b { display: block; font-family: var(--display); font-size: 1.15rem; margin-bottom: .35rem; }
+    .objetivo p { margin: 0; }
+    @media (max-width: 860px) { .reto .wrap { grid-template-columns: 1fr; gap: 1.5rem; } }
+
+    /* ---------- Recorrido del material ---------- */
+    .recorrido-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 1.5rem; }
+    .flow { list-style: none; padding: 0; margin: 3.5rem 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+    .step { position: relative; }
+    .step::before, .step::after {
+      content: ""; position: absolute; top: calc(1.6rem - 2px); left: 3.2rem;
+      width: calc(100% - 3.2rem + 1.5rem); height: 4px; border-radius: 4px;
+    }
+    .step::before { background: var(--line); }
+    .step::after { background: var(--moriche); transform: scaleX(0); transform-origin: left; transition: transform .8s ease; }
+    .step:last-child::before, .step:last-child::after { display: none; }
+    .step.done::after { transform: scaleX(1); }
+    .node {
+      position: relative; z-index: 1;
+      width: 3.2rem; height: 3.2rem; border-radius: 50%;
+      display: grid; place-items: center;
+      background: var(--surface); border: 3px solid var(--line);
+      font: 800 1.1rem var(--display);
+      transition: background .35s, border-color .35s, color .35s, transform .35s;
+    }
+    .step.on .node { background: var(--moriche); border-color: var(--moriche); color: var(--on-moriche); transform: scale(1.1); }
+    .step h3 { font-size: 1.3rem; margin: 1.1rem 0 .5rem; }
+    .step p { color: var(--muted); margin: 0; max-width: 24ch; }
+    .flow-note { margin-top: 2.5rem; color: var(--muted); max-width: 46em; }
+    @media (max-width: 760px) {
+      .flow { grid-template-columns: 1fr; gap: 2rem; }
+      .step { display: grid; grid-template-columns: 3.2rem 1fr; column-gap: 1.1rem; }
+      .step h3 { margin: .55rem 0 .3rem; }
+      .step p { max-width: none; }
+      .step > div { grid-column: 2; }
+      .step::before, .step::after {
+        top: 3.2rem; left: calc(1.6rem - 2px);
+        width: 4px; height: calc(100% - 3.2rem + 2rem);
+      }
+      .step::after { transform: scaleY(0); transform-origin: top; }
+      .step.done::after { transform: scaleY(1); }
+    }
+
+    /* ---------- Roles ---------- */
+    .roles { background: var(--surface); border-block: 1px solid var(--line); }
+    .tabs { display: flex; flex-wrap: wrap; gap: .5rem; margin: 2.5rem 0 2rem; }
+    .tab {
+      display: inline-flex; align-items: center; gap: .55rem;
+      padding: .7rem 1.2rem; border-radius: 999px;
+      border: 2px solid var(--line); background: var(--bg); color: var(--ink);
+      font: 700 1rem var(--body); cursor: pointer;
+      transition: background .2s, border-color .2s, color .2s;
+    }
+    .tab svg { width: 1.25rem; height: 1.25rem; }
+    .tab:hover { border-color: var(--moriche); }
+    .tab[aria-selected="true"] { background: var(--moriche); border-color: var(--moriche); color: var(--on-moriche); }
+    .panel { display: grid; grid-template-columns: 4fr 7fr; gap: 3rem; }
+    .panel[hidden] { display: none; }
+    .panel.enter { animation: panel-in .45s cubic-bezier(.2,.8,.2,1); }
+    @keyframes panel-in { from { opacity: 0; transform: translateY(12px); } }
+    .panel h3 { font-size: 1.8rem; }
+    .panel .rol-desc { color: var(--muted); margin: .8rem 0 1.5rem; }
+    .casos { list-style: none; padding: 0; margin: 0; display: grid; gap: .6rem; }
+    .casos li {
+      padding: .8rem 1rem; border-radius: 1.4rem;
+      border: 2px solid var(--moriche); color: var(--moriche); font-weight: 700;
+      text-align: center;
+    }
+    .pasos-titulo { font-family: var(--display); font-size: 1.2rem; margin-bottom: 1rem; }
+    .pasos { list-style: none; counter-reset: paso; padding: 0; margin: 0 0 2rem; }
+    .pasos li {
+      counter-increment: paso; position: relative;
+      padding: 0 0 1.1rem 3rem; min-height: 2.2rem;
+    }
+    .pasos li::before {
+      content: counter(paso); position: absolute; left: 0; top: -.1rem;
+      width: 2rem; height: 2rem; border-radius: 50%;
+      background: var(--soft); color: var(--moriche);
+      display: grid; place-items: center; font: 800 .95rem var(--display);
+    }
+    .excepciones { padding: 1.25rem 1.5rem; border-radius: 1rem; background: color-mix(in srgb, var(--tierra) 12%, transparent); }
+    .excepciones b { display: block; margin-bottom: .5rem; color: var(--tierra); }
+    .excepciones ul { margin: 0; padding-left: 1.2rem; }
+    .excepciones li + li { margin-top: .4rem; }
+    @media (max-width: 860px) { .panel { grid-template-columns: 1fr; gap: 2rem; } }
+
+    /* ---------- Tecnología ---------- */
+    .tec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 3rem; border-top: 2px solid var(--ink); }
+    .tec-grid > div { padding: 1.75rem 1.75rem 0 0; }
+    .tec-grid > div + div { padding-left: 1.75rem; border-left: 1px solid var(--line); }
+    .tec-grid h3 { font-size: 1.35rem; margin-bottom: .6rem; }
+    .tec-grid p { color: var(--muted); margin: 0; }
+    @media (max-width: 760px) {
+      .tec-grid { grid-template-columns: 1fr; }
+      .tec-grid > div, .tec-grid > div + div { padding: 1.5rem 0; border-left: 0; border-bottom: 1px solid var(--line); }
+    }
+
+    /* ---------- Equipo ---------- */
+    .equipo { background: var(--moriche); color: var(--on-moriche); }
+    .equipo .muted { color: color-mix(in srgb, var(--on-moriche) 78%, transparent); }
+    .team { list-style: none; padding: 0; margin: 3rem 0 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+    .team li { display: flex; align-items: center; gap: .9rem; }
+    .avatar {
+      flex: none; width: 3.5rem; height: 3.5rem; border-radius: 50%;
+      display: grid; place-items: center;
+      font: 800 1.1rem var(--display); color: #14251C;
+    }
+    .team strong { display: block; font-size: 1.05rem; line-height: 1.25; }
+    .ficha { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid color-mix(in srgb, var(--on-moriche) 30%, transparent); }
+    @media (max-width: 860px) { .team { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .team { grid-template-columns: 1fr; } }
+
+    footer { padding: 2.5rem 0; font-size: .95rem; color: var(--muted); }
+    footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+    footer a { font-weight: 700; color: var(--ink); }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-delay: 0s !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
   </style>
 </head>
-<body class="bg-white text-slate-800">
+<body>
+  <a class="skip" href="#contenido">Saltar al contenido</a>
 
-  <!-- NAV -->
-  <header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-200">
-    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="#inicio" class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-teal-700 flex items-center justify-center">
-          <i class="fa-solid fa-book-open text-white text-sm"></i>
-        </div>
-        <span class="font-heading font-semibold text-lg tracking-tight text-slate-900">SaberLAB</span>
+  <header class="top">
+    <div class="wrap">
+      <a href="#inicio" class="brand" aria-label="SaberLAB, ir al inicio">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#1F5C40"/><circle cx="46" cy="18" r="7" fill="#F2B632"/><path d="M14 46c8-14 28-14 36 0" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/></svg>
+        SaberLAB
       </a>
-      <nav class="hidden md:flex items-center gap-8 text-sm">
-        <a href="#que-es" class="text-slate-500 hover:text-slate-900">Qué es</a>
-        <a href="#para-quien" class="text-slate-500 hover:text-slate-900">Para quién</a>
-        <a href="#como-funciona" class="text-slate-500 hover:text-slate-900">Cómo funciona</a>
-        <a href="#roles" class="text-slate-500 hover:text-slate-900">Roles</a>
-        <a href="#equipo" class="text-slate-500 hover:text-slate-900">Equipo</a>
-        <a href="#contacto" class="text-slate-500 hover:text-slate-900">Contacto</a>
-      </nav>
+      <button class="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú"><span></span></button>
+      <ul class="menu" id="menu">
+        <li><a href="#reto">El reto</a></li>
+        <li><a href="#recorrido">Cómo funciona</a></li>
+        <li><a href="#roles">Roles</a></li>
+        <li><a href="#tecnologia">Tecnología</a></li>
+        <li><a href="#equipo">Equipo</a></li>
+      </ul>
     </div>
   </header>
 
-  <!-- HERO -->
-  <section id="inicio" class="pt-32 pb-20 px-6 border-b border-slate-200">
-    <div class="max-w-6xl mx-auto grid md:grid-cols-5 gap-12 items-center">
-      <div class="md:col-span-3">
-        <span class="text-xs uppercase tracking-widest text-teal-700 font-medium">Plataforma educativa</span>
-        <h1 class="mt-4 text-5xl sm:text-6xl font-semibold tracking-tight text-slate-900">
-          Aprender no debería depender del Internet
-        </h1>
-        <p class="mt-6 text-lg text-slate-600 max-w-prose">
-          SaberLAB es una aplicación pensada para colegios donde la conexión no siempre está disponible. Profesores publican tareas y guías; los estudiantes las resuelven sin conexión y todo se sincroniza cuando vuelve el Internet.
-        </p>
-        <div class="mt-8 flex gap-4">
-          <a href="#como-funciona" class="bg-teal-700 text-white px-6 py-3 text-sm font-medium hover:bg-teal-800 transition">Ver cómo funciona</a>
-          <a href="#que-es" class="border border-slate-300 text-slate-700 px-6 py-3 text-sm font-medium hover:border-slate-500 transition">Qué es SaberLAB</a>
-        </div>
-      </div>
-      <div class="md:col-span-2">
-        <div class="p-8 bg-teal-50 border border-teal-200 text-center">
-          <i class="fa-solid fa-signal text-5xl text-teal-700 mb-4"></i>
-          <h3 class="font-heading font-semibold text-lg text-slate-900">Modo Offline Activo</h3>
-          <p class="text-sm text-slate-600 mt-2">Funciona 100% en tu dispositivo sin necesidad de datos móviles ni Wi-Fi.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- QUE ES -->
-  <section id="que-es" class="py-20 px-6 border-b border-slate-200">
-    <div class="max-w-6xl mx-auto grid md:grid-cols-12 gap-10">
-      <div class="md:col-span-4">
-        <span class="text-xs uppercase tracking-widest text-slate-400 font-medium">Sobre el proyecto</span>
-        <h2 class="mt-3 text-3xl font-semibold text-slate-900">¿Qué es SaberLAB?</h2>
-      </div>
-      <div class="md:col-span-8 space-y-4 text-slate-600">
-        <p>SaberLAB es una aplicación educativa desarrollada en MIT App Inventor para que una institución escolar organice tareas, guías y actividades desde un solo lugar.</p>
-        <p>Combina almacenamiento local (TinyDB) para guardar la información dentro del celular con almacenamiento en la nube (CloudDB) que se activa únicamente cuando se decide sincronizar.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- PARA QUIEN -->
-  <section id="para-quien" class="py-20 px-6 bg-slate-900 text-slate-50">
-    <div class="max-w-6xl mx-auto">
-      <span class="text-xs uppercase tracking-widest text-teal-300 font-medium">Público objetivo</span>
-      <h2 class="mt-3 text-3xl font-semibold max-w-2xl">Diseñado para colegios con acceso limitado a Internet</h2>
-      <div class="mt-10 grid sm:grid-cols-3 gap-6">
-        <div class="p-6 bg-slate-800 border border-slate-700">
-          <i class="fa-solid fa-wifi text-teal-300 text-2xl mb-4"></i>
-          <h3 class="font-heading font-semibold text-lg mb-2">Sin conexión permanente</h3>
-          <p class="text-sm text-slate-300">No exige saldo ni internet continuo para leer ni entregar trabajos.</p>
-        </div>
-        <div class="p-6 bg-slate-800 border border-slate-700">
-          <i class="fa-solid fa-school text-teal-300 text-2xl mb-4"></i>
-          <h3 class="font-heading font-semibold text-lg mb-2">Para Colegios</h3>
-          <p class="text-sm text-slate-300">Control centralizado de grados, cursos y asignaturas escolares.</p>
-        </div>
-        <div class="p-6 bg-slate-800 border border-slate-700">
-          <i class="fa-solid fa-users text-teal-300 text-2xl mb-4"></i>
-          <h3 class="font-heading font-semibold text-lg mb-2">Profesores y Alumnos</h3>
-          <p class="text-sm text-slate-300">Interfaz fácil e intuitiva pensada para el aula de clase.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- COMO FUNCIONA -->
-  <section id="como-funciona" class="py-20 px-6 border-b border-slate-200">
-    <div class="max-w-6xl mx-auto">
-      <span class="text-xs uppercase tracking-widest text-slate-400 font-medium">Flujo de uso</span>
-      <h2 class="mt-3 text-3xl font-semibold text-slate-900">Cómo funciona</h2>
-      <div class="mt-12 grid sm:grid-cols-2 md:grid-cols-4 gap-8">
+  <main id="contenido">
+    <!-- PORTADA -->
+    <section class="hero" id="inicio">
+      <div class="wrap">
         <div>
-          <span class="text-4xl font-heading font-semibold text-teal-200">01</span>
-          <h3 class="font-semibold text-slate-900 mt-2">Ingresar</h3>
-          <p class="text-sm text-slate-600 mt-1">El usuario entra con sus credenciales asignadas por el colegio.</p>
+          <p class="kicker">Proyecto de grado 11-2, IESTAP</p>
+          <h1>Aprender no debería depender de la señal</h1>
+          <p class="lede">SaberLAB es una aplicación educativa que funciona sin conexión a Internet. El docente crea y organiza el material por asignatura, y el estudiante lo consulta en su dispositivo, esté donde esté.</p>
+          <div class="ctas">
+            <a href="#recorrido" class="btn btn-primary">Ver cómo funciona</a>
+            <a href="#roles" class="btn btn-ghost">Conocer los roles</a>
+          </div>
         </div>
-        <div>
-          <span class="text-4xl font-heading font-semibold text-teal-200">02</span>
-          <h3 class="font-semibold text-slate-900 mt-2">Publicar o Ver</h3>
-          <p class="text-sm text-slate-600 mt-1">Los profes suben material y los estudiantes revisan según su grado.</p>
-        </div>
-        <div>
-          <span class="text-4xl font-heading font-semibold text-teal-200">03</span>
-          <h3 class="font-semibold text-slate-900 mt-2">Responder Offline</h3>
-          <p class="text-sm text-slate-600 mt-1">Las tareas se completan sin necesidad de tener red activa.</p>
-        </div>
-        <div>
-          <span class="text-4xl font-heading font-semibold text-teal-200">04</span>
-          <h3 class="font-semibold text-slate-900 mt-2">Sincronizar</h3>
-          <p class="text-sm text-slate-600 mt-1">Cuando hay señal disponible, las notas y entregas se actualizan.</p>
+
+        <div class="phone-stage">
+          <div class="phone play" role="img" aria-label="Teléfono que pierde la señal y aun así muestra el material de clase guardado en el dispositivo">
+            <div class="screen" aria-hidden="true">
+              <div class="status">
+                <span>7:15</span>
+                <span class="signal">
+                  <span class="bars"><i></i><i></i><i></i><i></i></span>
+                  <svg class="wifi" viewBox="0 0 24 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                    <path d="M2 7a15 15 0 0 1 20 0M5.5 10.5a10 10 0 0 1 13 0M9 14a5 5 0 0 1 6 0" opacity=".35"/>
+                    <circle cx="12" cy="17.5" r="1.3" fill="currentColor" stroke="none" opacity=".35"/>
+                    <path class="slash" d="M3 2l18 16"/>
+                  </svg>
+                </span>
+              </div>
+              <div class="app-head">
+                <small>Mi material</small>
+                <h3>Hola, Gabriela</h3>
+                <span class="chip">Sin conexión, todo disponible</span>
+              </div>
+              <ul class="mats">
+                <li class="mat">
+                  <span class="tag" style="background:#1F5C40">MA</span>
+                  <div><strong>Guía de fracciones</strong><span>Matemáticas</span></div>
+                  <span class="check"><svg viewBox="0 0 12 10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 5l3.5 3.5L11 1"/></svg></span>
+                </li>
+                <li class="mat">
+                  <span class="tag" style="background:#2F6F9F">CN</span>
+                  <div><strong>El ciclo del agua</strong><span>Ciencias naturales</span></div>
+                </li>
+                <li class="mat">
+                  <span class="tag" style="background:#A4562E">CS</span>
+                  <div><strong>Ríos de la Orinoquía</strong><span>Ciencias sociales</span></div>
+                </li>
+                <li class="mat">
+                  <span class="tag" style="background:#B8860B">LC</span>
+                  <div><strong>Taller de comprensión</strong><span>Lenguaje</span></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <button class="replay" id="replay" type="button">Repetir animación</button>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ROLES -->
-  <section id="roles" class="py-20 px-6 bg-slate-50 border-b border-slate-200">
-    <div class="max-w-6xl mx-auto">
-      <span class="text-xs uppercase tracking-widest text-slate-400 font-medium">Tipos de cuenta</span>
-      <h2 class="mt-3 text-3xl font-semibold text-slate-900">Roles en SaberLAB</h2>
-      <div class="mt-10 grid md:grid-cols-3 gap-6">
-        <div class="p-8 bg-white border border-slate-200">
-          <i class="fa-solid fa-graduation-cap text-teal-700 text-2xl mb-4"></i>
-          <h3 class="font-heading font-semibold text-lg text-slate-900">Estudiante</h3>
-          <p class="text-sm text-slate-600 mt-2">Consulta deberes de su curso, desarrolla las guías y envía respuestas.</p>
-        </div>
-        <div class="p-8 bg-white border border-slate-200">
-          <i class="fa-solid fa-chalkboard-user text-teal-700 text-2xl mb-4"></i>
-          <h3 class="font-heading font-semibold text-lg text-slate-900">Profesor</h3>
-          <p class="text-sm text-slate-600 mt-2">Crea contenidos, adjunta recursos y califica a sus cursos asignados.</p>
-        </div>
-        <div class="p-8 bg-white border border-slate-200">
-          <i class="fa-solid fa-user-shield text-teal-700 text-2xl mb-4"></i>
-          <h3 class="font-heading font-semibold text-lg text-slate-900">Administrador</h3>
-          <p class="text-sm text-slate-600 mt-2">Gestiona, crea y elimina usuarios asegurando el control institucional.</p>
+      <svg class="horizon" viewBox="0 0 1440 140" preserveAspectRatio="xMidYMax slice" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+        <path d="M0 128 C 240 118, 480 124, 720 120 S 1200 116, 1440 124"/>
+        <g>
+          <path d="M1060 122 L1066 48"/>
+          <path d="M1066 48 l-34 -10 M1066 48 l-28 -24 M1066 48 l-10 -32 M1066 48 l10 -32 M1066 48 l28 -24 M1066 48 l34 -8 M1066 48 l-30 14 M1066 48 l30 16"/>
+        </g>
+        <g>
+          <path d="M1180 120 L1176 64"/>
+          <path d="M1176 64 l-28 -8 M1176 64 l-22 -20 M1176 64 l-6 -26 M1176 64 l10 -24 M1176 64 l24 -18 M1176 64 l28 -4 M1176 64 l-24 12 M1176 64 l24 14"/>
+        </g>
+        <g>
+          <path d="M1290 124 L1294 82"/>
+          <path d="M1294 82 l-20 -6 M1294 82 l-16 -16 M1294 82 l-2 -20 M1294 82 l12 -16 M1294 82 l20 -6 M1294 82 l-18 10 M1294 82 l18 10"/>
+        </g>
+        <g>
+          <path d="M140 124 L144 78"/>
+          <path d="M144 78 l-22 -6 M144 78 l-18 -18 M144 78 l-4 -22 M144 78 l10 -20 M144 78 l22 -10 M144 78 l-20 10 M144 78 l22 10"/>
+        </g>
+      </svg>
+    </section>
+
+    <!-- EL RETO -->
+    <section class="reto" id="reto">
+      <div class="wrap">
+        <h2>La conexión no llega igual a todas las aulas</h2>
+        <div class="texto">
+          <p>El acceso a Internet y a herramientas tecnológicas no es el mismo para un estudiante de la ciudad que para uno del campo. Esa diferencia, la brecha digital, también se convierte en una diferencia de oportunidades para aprender.</p>
+          <p>Por eso creamos SaberLAB con App Inventor y la diseñamos para funcionar sin conexión: los contenidos se guardan en el dispositivo y se pueden consultar aunque no haya una red estable.</p>
+          <div class="objetivo">
+            <b>Nuestro objetivo</b>
+            <p>Desarrollar una aplicación educativa que funcione sin conexión a Internet, para facilitar el aprendizaje de quienes no cuentan con conexión, mediante contenidos y actividades educativas accesibles.</p>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- EQUIPO -->
-  <section id="equipo" class="py-20 px-6 border-b border-slate-200">
-    <div class="max-w-6xl mx-auto">
-      <span class="text-xs uppercase tracking-widest text-slate-400 font-medium">Desarrolladores</span>
-      <h2 class="mt-3 text-3xl font-semibold text-slate-900">Equipo de Desarrollo</h2>
-      <div class="mt-10 grid sm:grid-cols-2 md:grid-cols-4 gap-6">
-        <div class="p-6 text-center border border-slate-200">
-          <div class="w-16 h-16 mx-auto bg-teal-100 text-teal-800 font-heading font-bold text-xl flex items-center justify-center rounded-full mb-3">TA</div>
-          <p class="font-semibold text-slate-900">Tomas Aguilera</p>
-          <span class="text-xs text-slate-400">Equipo SaberLAB</span>
+    <!-- RECORRIDO -->
+    <section id="recorrido">
+      <div class="wrap">
+        <div class="recorrido-head">
+          <h2>Del docente al estudiante, sin pasar por Internet</h2>
+          <button class="btn btn-ghost" id="play-flow" type="button">Ver el recorrido</button>
         </div>
-        <div class="p-6 text-center border border-slate-200">
-          <div class="w-16 h-16 mx-auto bg-teal-100 text-teal-800 font-heading font-bold text-xl flex items-center justify-center rounded-full mb-3">JP</div>
-          <p class="font-semibold text-slate-900">Juan Paez</p>
-          <span class="text-xs text-slate-400">Equipo SaberLAB</span>
+        <ol class="flow">
+          <li class="step">
+            <span class="node">1</span>
+            <div>
+              <h3>Crear</h3>
+              <p>El docente registra una guía, actividad, imagen o video con título, asignatura y descripción.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="node">2</span>
+            <div>
+              <h3>Organizar</h3>
+              <p>La app valida el archivo, lo guarda en el dispositivo y lo ordena por asignatura.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="node">3</span>
+            <div>
+              <h3>Transferir</h3>
+              <p>El material pasa del dispositivo del docente al del estudiante.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="node">4</span>
+            <div>
+              <h3>Consultar</h3>
+              <p>El estudiante lo abre, lo marca como revisado o favorito, y la app recuerda su avance.</p>
+            </div>
+          </li>
+        </ol>
+        <p class="flow-note">En ningún paso se necesita conexión a Internet: todo ocurre en el almacenamiento local de cada dispositivo.</p>
+      </div>
+    </section>
+
+    <!-- ROLES -->
+    <section class="roles" id="roles">
+      <div class="wrap">
+        <h2>Tres roles, una misma app</h2>
+        <div class="tabs" role="tablist" aria-label="Roles de SaberLAB">
+          <button class="tab" role="tab" id="tab-docente" aria-controls="panel-docente" aria-selected="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20l2-4M16 20l-2-4M7 9h6M7 12h4"/></svg>
+            Docente
+          </button>
+          <button class="tab" role="tab" id="tab-estudiante" aria-controls="panel-estudiante" aria-selected="false" tabindex="-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6c-2-1.5-5-2-8-1.5v13c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-13c-3-.5-6 0-8 1.5zM12 6v13"/></svg>
+            Estudiante
+          </button>
+          <button class="tab" role="tab" id="tab-admin" aria-controls="panel-admin" aria-selected="false" tabindex="-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+            Administrador
+          </button>
         </div>
-        <div class="p-6 text-center border border-slate-200">
-          <div class="w-16 h-16 mx-auto bg-teal-100 text-teal-800 font-heading font-bold text-xl flex items-center justify-center rounded-full mb-3">GG</div>
-          <p class="font-semibold text-slate-900">Gabriela Garzon</p>
-          <span class="text-xs text-slate-400">Equipo SaberLAB</span>
+
+        <div class="panel" role="tabpanel" id="panel-docente" aria-labelledby="tab-docente" tabindex="0">
+          <div>
+            <h3>Docente</h3>
+            <p class="rol-desc">Prepara el material de su clase y lo deja listo para que llegue a sus estudiantes.</p>
+            <ul class="casos">
+              <li>Crear material educativo</li>
+              <li>Organizar contenido por asignatura</li>
+            </ul>
+          </div>
+          <div>
+            <p class="pasos-titulo">Paso a paso: crear material educativo</p>
+            <ol class="pasos">
+              <li>Ingresa a la aplicación y elige «Crear material».</li>
+              <li>La app muestra un formulario para el título, la asignatura, la descripción y el archivo.</li>
+              <li>Completa los campos y adjunta el material: documento, imagen o video.</li>
+              <li>La app valida el formato y el tamaño, y guarda el archivo en el dispositivo.</li>
+              <li>La app confirma que el material quedó creado y guardado.</li>
+            </ol>
+            <div class="excepciones">
+              <b>Si algo sale mal</b>
+              <ul>
+                <li>Si el archivo es muy pesado o su formato no es compatible, la app avisa y pide elegir otro.</li>
+                <li>Si el docente cancela antes de guardar, la app descarta los datos ingresados.</li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class="p-6 text-center border border-slate-200">
-          <div class="w-16 h-16 mx-auto bg-teal-100 text-teal-800 font-heading font-bold text-xl flex items-center justify-center rounded-full mb-3">MD</div>
-          <p class="font-semibold text-slate-900">Mario Diaz</p>
-          <span class="text-xs text-slate-400">Equipo SaberLAB</span>
+
+        <div class="panel" role="tabpanel" id="panel-estudiante" aria-labelledby="tab-estudiante" tabindex="0" hidden>
+          <div>
+            <h3>Estudiante</h3>
+            <p class="rol-desc">Encuentra y estudia el material de cada asignatura directamente desde su dispositivo.</p>
+            <ul class="casos">
+              <li>Buscar material por asignatura</li>
+              <li>Acceder al material sin Internet</li>
+            </ul>
+          </div>
+          <div>
+            <p class="pasos-titulo">Paso a paso: consultar material sin Internet</p>
+            <ol class="pasos">
+              <li>Elige el material que quiere consultar en su lista.</li>
+              <li>La app abre el archivo desde el almacenamiento del dispositivo.</li>
+              <li>Ve el contenido (texto, imágenes o video) sin necesidad de red.</li>
+              <li>Puede marcarlo como revisado o guardarlo como favorito.</li>
+              <li>La app actualiza el estado de lectura en el dispositivo.</li>
+            </ol>
+            <div class="excepciones">
+              <b>Si algo sale mal</b>
+              <ul>
+                <li>Si el archivo está dañado o incompleto, la app lo informa y sugiere pedir una nueva transferencia al docente.</li>
+                <li>Si el estudiante cierra la app antes de terminar, su avance queda guardado para la próxima vez.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" role="tabpanel" id="panel-admin" aria-labelledby="tab-admin" tabindex="0" hidden>
+          <div>
+            <h3>Administrador</h3>
+            <p class="rol-desc">Gestiona las cuentas de docentes y estudiantes y vigila el espacio disponible en el sistema.</p>
+            <ul class="casos">
+              <li>Administrar el acceso a cuentas</li>
+            </ul>
+          </div>
+          <div>
+            <p class="pasos-titulo">Paso a paso: gestionar usuarios</p>
+            <ol class="pasos">
+              <li>Entra al panel de gestión de usuarios.</li>
+              <li>La app muestra los usuarios registrados y el estado del almacenamiento.</li>
+              <li>Crea, edita o elimina un usuario, o revisa el espacio utilizado.</li>
+              <li>La app aplica los cambios y actualiza el registro.</li>
+              <li>La app confirma que la operación terminó correctamente.</li>
+            </ol>
+            <div class="excepciones">
+              <b>Si algo sale mal</b>
+              <ul>
+                <li>Si intenta eliminar a un usuario con material pendiente por transferir, la app advierte antes de continuar.</li>
+                <li>Si el almacenamiento está por llenarse, la app avisa para liberar espacio.</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- FOOTER -->
-  <footer id="contacto" class="py-12 px-6 bg-slate-900 text-slate-400 text-sm">
-    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-      <p class="text-slate-300 font-heading font-semibold">SaberLAB &copy; 2026</p>
-      <p>Tomas Aguilera · Juan Paez · Gabriela Garzon · Mario Diaz</p>
+    <!-- TECNOLOGÍA -->
+    <section id="tecnologia">
+      <div class="wrap">
+        <h2>Hecha con herramientas al alcance del colegio</h2>
+        <div class="tec-grid">
+          <div>
+            <h3>MIT App Inventor</h3>
+            <p>Programamos la app con bloques visuales, una herramienta gratuita que genera aplicaciones para Android.</p>
+          </div>
+          <div>
+            <h3>Almacenamiento local</h3>
+            <p>Los archivos, las cuentas y el avance de lectura se guardan dentro del dispositivo, sin servidores externos.</p>
+          </div>
+          <div>
+            <h3>Cero datos móviles</h3>
+            <p>No hace falta saldo, Wi-Fi ni señal para crear, organizar o estudiar el material.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EQUIPO -->
+    <section class="equipo" id="equipo">
+      <div class="wrap">
+        <h2>Quiénes lo hicimos</h2>
+        <ul class="team">
+          <li><span class="avatar" style="background:#F2B632">JP</span><div><strong>Juan Pablo Páez</strong></div></li>
+          <li><span class="avatar" style="background:#9FD4B5">TA</span><div><strong>Tomás Aguilera</strong></div></li>
+          <li><span class="avatar" style="background:#A9CDE6">GG</span><div><strong>Gabriela Garzón</strong></div></li>
+          <li><span class="avatar" style="background:#F0B79A">LD</span><div><strong>Luis Díaz</strong></div></li>
+        </ul>
+        <p class="ficha muted">Grado 11-2, Programación de Software. Institución Educativa Santa Teresa de Pachaquiaro, Puerto López, Meta. Septiembre de 2026.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>SaberLAB, 2026. Proyecto estudiantil de la IESTAP.</p>
+      <p><a href="https://github.com/Gab-bi22/SaberLAB">Código en GitHub</a></p>
     </div>
   </footer>
 
+  <script>
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Menú móvil
+      var btn = document.querySelector('.menu-btn');
+      var menu = document.getElementById('menu');
+      function setMenu(open) {
+        menu.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        btn.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      }
+      btn.addEventListener('click', function () { setMenu(!menu.classList.contains('open')); });
+      menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { setMenu(false); }); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+
+      // Repetir animación del teléfono
+      var phone = document.querySelector('.phone');
+      document.getElementById('replay').addEventListener('click', function () {
+        phone.classList.remove('play');
+        void phone.offsetWidth;
+        phone.classList.add('play');
+      });
+
+      // Recorrido del material
+      var steps = Array.prototype.slice.call(document.querySelectorAll('.step'));
+      var timers = [];
+      function runFlow() {
+        timers.forEach(clearTimeout); timers = [];
+        steps.forEach(function (s) { s.classList.remove('on', 'done'); });
+        if (reduce) { steps.forEach(function (s, i) { s.classList.add('on'); if (i < steps.length - 1) s.classList.add('done'); }); return; }
+        steps.forEach(function (s, i) {
+          timers.push(setTimeout(function () {
+            if (i > 0) steps[i - 1].classList.add('done');
+            s.classList.add('on');
+          }, 250 + i * 950));
+        });
+      }
+      document.getElementById('play-flow').addEventListener('click', runFlow);
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          if (entries[0].isIntersecting) { runFlow(); io.disconnect(); }
+        }, { threshold: 0.45 });
+        io.observe(document.querySelector('.flow'));
+      } else { runFlow(); }
+
+      // Pestañas de roles
+      var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+      function select(tab) {
+        tabs.forEach(function (t) {
+          var on = t === tab;
+          t.setAttribute('aria-selected', String(on));
+          t.tabIndex = on ? 0 : -1;
+          var panel = document.getElementById(t.getAttribute('aria-controls'));
+          panel.hidden = !on;
+          if (on) { panel.classList.remove('enter'); void panel.offsetWidth; panel.classList.add('enter'); }
+        });
+      }
+      tabs.forEach(function (t, i) {
+        t.addEventListener('click', function () { select(t); });
+        t.addEventListener('keydown', function (e) {
+          var n = null;
+          if (e.key === 'ArrowRight') n = tabs[(i + 1) % tabs.length];
+          if (e.key === 'ArrowLeft') n = tabs[(i - 1 + tabs.length) % tabs.length];
+          if (e.key === 'Home') n = tabs[0];
+          if (e.key === 'End') n = tabs[tabs.length - 1];
+          if (n) { e.preventDefault(); select(n); n.focus(); }
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
